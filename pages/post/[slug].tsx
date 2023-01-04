@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { sanityClient, urlFor } from "../../sanity";
-import { Post, PostProps, Comment } from '../../typing';
+import { Post, PostProps, Comment } from "../../typing";
 import { GetStaticProps } from "next";
 import PostHeader from "../../components/PostHeader";
 import { RiMailAddLine } from "react-icons/ri";
@@ -16,7 +16,8 @@ import {
 } from "react-icons/fa";
 import { MdOutlineBookmarkAdd } from "react-icons/md";
 import Posts from "../../components/Posts";
-import { useForm, handleSubmit } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
+import Link from "next/link";
 
 interface IFormInput {
   _id: string;
@@ -35,27 +36,25 @@ function Post({ post, posts }: Props) {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      _id: '',
-      name: ''
-    }
-  });
+  } = useForm<IFormInput>();
 
-  const onSubmit: handleSubmit<IFormInput> = async (data) => {
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
     fetch("/api/createComment", {
       method: "POST",
       mode: "cors",
       credentials: "include",
       body: JSON.stringify(data),
-    }).then(() => {
-      console.log(data);
-      setSubmitted(true);
-    }).catch((err) => {
-      console.log(err);
-      setSubmitted(false);
-    });
+    })
+      .then(() => {
+        console.log(data);
+        setSubmitted(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        setSubmitted(false);
+      });
   };
 
   Moment.locale("en");
@@ -151,90 +150,97 @@ function Post({ post, posts }: Props) {
             </h3>
             <hr className="max-w-full h-px my-5 mx-auto" />
           </div>
-          
+
           {submitted ? (
             <div className="flex flex-col py-10 my-10 bg-sky-500  max-w-2xl mx-auto text-center text-white border rounded-lg">
-               <h3 className="font-bold text-2xl ">Thank you for submitting your comment</h3>
-               <p className="">Once it has been approved, it will appear below!</p>
+              <h3 className="font-bold text-2xl ">
+                Thank you for submitting your comment
+              </h3>
+              <p className="">
+                Once it has been approved, it will appear below!
+              </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-full">
-            <div className="mb-6">
-              <div className="">
-                <label className="text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                  Full Name
-                </label>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="w-full max-w-full"
+            >
+              <div className="mb-6">
+                <div className="">
+                  <label className="text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                    Full Name
+                  </label>
 
-                {errors.name && (
-                  <span className="text-red-500">
-                    * The name feild is required
-                  </span>
-                )}
+                  {errors.name && (
+                    <span className="text-red-500">
+                      * The name feild is required
+                    </span>
+                  )}
+                </div>
+                <div className="">
+                  <input
+                    {...register("name", { required: true })}
+                    className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-sky-500"
+                    id="inline-full-name"
+                    type="text"
+                    placeholder="Jane Doe"
+                  />
+                </div>
               </div>
-              <div className="">
-                <input
-                  {...register("name", { required: true })}
-                  className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-sky-500"
-                  id="inline-full-name"
-                  type="text"
-                  placeholder="Jane Doe"
-                />
+              <div className="w-full max-w-full">
+                <div className="">
+                  <label className=" text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                    Email
+                  </label>
+                  {errors.email && (
+                    <span className="text-red-500">
+                      * The email feild is required
+                    </span>
+                  )}
+                </div>
+                <div className="">
+                  <input
+                    {...register("email", { required: true })}
+                    className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-sky-500"
+                    id="inline-full-name"
+                    type="text"
+                    placeholder="janedoe@gmail.com"
+                  />
+                </div>
               </div>
-            </div>
-            <div className="w-full max-w-full">
-              <div className="">
-                <label className=" text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                  Email
-                </label>
-                {errors.email && (
-                  <span className="text-red-500">
-                    * The email feild is required
-                  </span>
-                )}
-              </div>
-              <div className="">
-                <input
-                  {...register("email", { required: true })}
-                  className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-sky-500"
-                  id="inline-full-name"
-                  type="text"
-                  placeholder="janedoe@gmail.com"
-                />
-              </div>
-            </div>
 
-            <div className="py-8">
-              <div className="">
-                <label className=" text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-                  Commet
-                </label>
-                {errors.comment && (
-                  <span className="text-red-500">
-                    * The comment feild is required
-                  </span>
-                )}
+              <div className="py-8">
+                <div className="">
+                  <label className=" text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+                    Commet
+                  </label>
+                  {errors.comment && (
+                    <span className="text-red-500">
+                      * The comment feild is required
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <textarea
+                    {...register("comment", { required: true })}
+                    id="message"
+                    className="p-4 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:border-sky-500"
+                    placeholder="Write your thoughts here..."
+                  ></textarea>
+                </div>
               </div>
-              <div>
-                <textarea
-                  {...register("comment", { required: true })}
-                  id="message"
-                  className="p-4 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:border-sky-500"
-                  placeholder="Write your thoughts here..."
-                ></textarea>
-              </div>
-            </div>
 
-            <div className="mb-8">
-              <div className="">
-                <button
-                  className="shadow bg-sky-500 hover:bg-cyan-500 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded"
-                  type="submit"
-                >
-                  Submit
-                </button>
+              <div className="mb-8">
+                <div className="">
+                  <button
+                    className="shadow bg-sky-500 hover:bg-cyan-500 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded"
+                    type="submit"
+                  >
+                    Submit
+                  </button>
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
           )}
 
           {/* Comments */}
@@ -242,11 +248,14 @@ function Post({ post, posts }: Props) {
             <h3 className="text-xl md:text-3xl font-semibold">Comments</h3>
             <hr className="max-w-full h-px my-5 mx-aut" />
 
-            {post.comments.map(c => (
+            {post.comments.map((c) => (
               <div key={c._id} className="py-2">
-                <p><span className="text-sky-500 font-semibold">{c.name} </span> : <span className="text-gray-500">{c.comment}</span></p>
+                <p>
+                  <span className="text-sky-500 font-semibold">{c.name} </span>{" "}
+                  : <span className="text-gray-500">{c.comment}</span>
+                </p>
               </div>
-              ))}
+            ))}
           </div>
         </article>
 
@@ -258,7 +267,6 @@ function Post({ post, posts }: Props) {
               alt=""
             />
             <p className="font-semibold text-xl pt-3 text-gray-700">
-              {" "}
               {post.author.name}
             </p>
             <p className="text-lg text-gray-500"> 196K Followers</p>
@@ -273,12 +281,50 @@ function Post({ post, posts }: Props) {
                 <RiMailAddLine />
               </h3>
             </div>
-
-            <div className="py-10">
-              <h3 className="font-semibold">More from Medium</h3>
-              <Posts posts={posts} />
-            </div>
           </div>
+
+          <div className="py-10">
+            <h3 className="font-semibold">More from Medium</h3>
+            {posts.map((post) => (
+              <Link key={post._id} href={`/post/${post.slug.current}`}>
+                <div className="grid grid-cols-2 gap-3 p-5 cursor-pointer lg:w-4/6">
+                  <div className="col-span-2">
+                    <div className="flex justify-start items-center">
+                      <img
+                        className="h-6 w-6 rounded-full mr-2"
+                        src={urlFor(post.author.image).url()!}
+                        alt=""
+                      />
+                      <p className="font-semibold text-xs">
+                        {post.author.name}
+                      </p>
+                    </div>
+
+                    <p className="text-sm lg:text-xl font-bold py-1">
+                      {post.title}
+                    </p>
+                    <p className="text-gray-500 py-1 text-xs">
+                      {post.description}
+                    </p>
+
+                    <div className="text-gray-500 py-1">
+                      <p className="text-sm">
+                        {Moment(post._createdAt).format("MMM d, Y")} ⭐
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <img
+                      className="max-w-full h-auto rounded-lg"
+                      src={urlFor(post.mainImage).url()!}
+                      alt=""
+                    />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
           <div className="px-2">
             <PostFooter />
           </div>
