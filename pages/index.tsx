@@ -14,7 +14,7 @@ const Home = ({ posts, categories }: Props) => {
   return (
     <div className="mx-auto">
       <Head>
-        <title>Create Next App</title>
+        <title>Medium - Where good ideas find you.</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -55,7 +55,7 @@ export const getServerSideProps = async () => {
       categories[] -> {
         title,
         slug
-},
+    },
     
   }`;
 
