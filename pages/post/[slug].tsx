@@ -16,7 +16,7 @@ import {
 } from "react-icons/fa";
 import { MdOutlineBookmarkAdd } from "react-icons/md";
 import Posts from "../../components/Posts";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, handleSubmit } from "react-hook-form";
 
 interface IFormInput {
   _id: string;
@@ -36,9 +36,14 @@ function Post({ post, posts }: Props) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      _id: '',
+      name: ''
+    }
+  });
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+  const onSubmit: handleSubmit<IFormInput> = async (data) => {
     fetch("/api/createComment", {
       method: "POST",
       mode: "cors",
