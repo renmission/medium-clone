@@ -32,6 +32,8 @@ interface Props {
 }
 
 function Post({ post, posts }: Props) {
+
+  
   const [submitted, setSubmitted] = useState(false);
   const {
     register,
@@ -117,8 +119,11 @@ function Post({ post, posts }: Props) {
                 h1: (props: any) => (
                   <h1 className="text-2xl font-bold mt-10 mb-3">{...props}</h1>
                 ),
-                h2: (props: any) => (
-                  <h1 className="text-xl font-bold mt-10 mb-3">{...props}</h1>
+                div: (props: any) => (
+                  <div className="text-xl font-bold mt-10 mb-3">{...props}</div>
+                ),
+                p: (props: any) => (
+                  <p className="text-2xl font-bold mt-10 mb-3">{...props}</p>
                 ),
                 li: ({ children }: any) => (
                   <li className="ml-4 list-disc">{children}</li>
